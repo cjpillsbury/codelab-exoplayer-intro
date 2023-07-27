@@ -23,12 +23,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.exoplayer.databinding.ActivityPlayerBinding
-import com.mux.muxplayer.MuxMediaItem
 import com.mux.muxplayer.MuxMediaItemBuilder
 import com.mux.muxplayer.MuxPlayer
 
@@ -85,7 +82,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun initializePlayer() {
-        // ExoPlayer implements the Player interface
+        // MuxPlayer implements the Player interface
         player = MuxPlayer.Builder(this)
             .build()
             .also { exoPlayer ->
@@ -97,8 +94,10 @@ class PlayerActivity : AppCompatActivity() {
                         .build()
 
                 val mediaItem = MuxMediaItemBuilder()
-                    .setUri(getString(R.string.media_url_hls))
-                    .setMimeType(MimeTypes.APPLICATION_M3U8)
+//                   // replace the playbackId usage below with this to demo use of customDomains
+//                    .setPlaybackId(getString(R.string.media_mux_playback_id_custom_domain))
+//                    .setCustomDomain(getString(R.string.media_mux_custom_domain))
+                    .setPlaybackId(getString(R.string.media_mux_playback_id))
                     .build()
                 exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
                 exoPlayer.playWhenReady = playWhenReady
