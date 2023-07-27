@@ -44,4 +44,10 @@ dependencies {
     // TODO: Parameterize media3 vs. "tradish" exo? (CJP)
     implementation "androidx.media3:media3-exoplayer-hls:$mediaVersion"
     implementation "androidx.media3:media3-exoplayer:$mediaVersion"
+
+    // TODO: I'm getting build issues when trying to include this
+    // either as an implementation or an api (directly copied from the readme). (CJP)
+    // TODO: In the README, the example uses api. Should we do that here? (CJP)
+    // com.mux.stats.sdk.muxstats.media3
+//    implementation 'com.mux.stats.sdk.muxstats:data-media3:0.7.0'
 }
