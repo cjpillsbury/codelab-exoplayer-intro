@@ -28,6 +28,8 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.exoplayer.databinding.ActivityPlayerBinding
+import com.mux.muxplayer.MuxMediaItem
+import com.mux.muxplayer.MuxMediaItemBuilder
 import com.mux.muxplayer.MuxPlayer
 
 private const val TAG = "PlayerActivity"
@@ -94,7 +96,7 @@ class PlayerActivity : AppCompatActivity() {
                         .setMaxVideoSizeSd()
                         .build()
 
-                val mediaItem = MediaItem.Builder()
+                val mediaItem = MuxMediaItemBuilder()
                     .setUri(getString(R.string.media_url_hls))
                     .setMimeType(MimeTypes.APPLICATION_M3U8)
                     .build()
