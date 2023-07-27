@@ -6,6 +6,8 @@ buildscript {
         buildToolsVersion = "30.0.3"
 
         kotlin_version = "1.6.21"
+
+        mediaVersion = "1.0.1"
     }
 
     repositories {

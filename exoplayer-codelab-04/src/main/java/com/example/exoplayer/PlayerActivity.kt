@@ -94,8 +94,8 @@ class PlayerActivity : AppCompatActivity() {
                         .build()
 
                 val mediaItem = MediaItem.Builder()
-                    .setUri(getString(R.string.media_url_dash))
-                    .setMimeType(MimeTypes.APPLICATION_MPD)
+                    .setUri(getString(R.string.media_url_hls))
+                    .setMimeType(MimeTypes.APPLICATION_M3U8)
                     .build()
                 exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
                 exoPlayer.playWhenReady = playWhenReady
