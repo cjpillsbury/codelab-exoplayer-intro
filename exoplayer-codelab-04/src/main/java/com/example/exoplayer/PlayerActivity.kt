@@ -28,6 +28,7 @@ import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.example.exoplayer.databinding.ActivityPlayerBinding
+import com.mux.muxplayer.MuxPlayer
 
 private const val TAG = "PlayerActivity"
 
@@ -83,7 +84,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun initializePlayer() {
         // ExoPlayer implements the Player interface
-        player = ExoPlayer.Builder(this)
+        player = MuxPlayer.Builder(this)
             .build()
             .also { exoPlayer ->
                 viewBinding.videoView.player = exoPlayer
