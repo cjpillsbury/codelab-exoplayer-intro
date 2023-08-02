@@ -45,9 +45,8 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer-hls:$mediaVersion"
     implementation "androidx.media3:media3-exoplayer:$mediaVersion"
 
-    // TODO: I'm getting build issues when trying to include this
-    // either as an implementation or an api (directly copied from the readme). (CJP)
+    // TODO: The latest version of muxstats:data-media3 is not compatible with media3 1.1.0, which is where Cmcd was added (CJP)
     // TODO: In the README, the example uses api. Should we do that here? (CJP)
     // com.mux.stats.sdk.muxstats.media3
-//    implementation 'com.mux.stats.sdk.muxstats:data-media3:0.7.0'
+//    implementation 'com.mux.stats.sdk.muxstats:data-media3:0.7.1'
 }
