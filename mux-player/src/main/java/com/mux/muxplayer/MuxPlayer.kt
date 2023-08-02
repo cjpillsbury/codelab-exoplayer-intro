@@ -15,8 +15,7 @@ class MuxPlayer private constructor(private val player: ExoPlayer) : Player by p
    * Reference to the [ExoPlayer] that powers this `MuxPlayer` instance. In most cases, you
    * don't have to access this directly, but it's available if you need it
    *
-   * No guarantees about the player's state are made, and methods that control playback, eg
-   * [Player.addMediaItem], [Player.setPlayWhenReady], etc may not work as expected.
+   * DESGIN NOTES: Honestly we don't need to offer this, but it does allow for more complete transparency
    */
   val exoPlayer by this::player
 
