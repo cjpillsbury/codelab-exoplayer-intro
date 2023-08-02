@@ -60,11 +60,10 @@ class MuxPlayer private constructor(private val player: ExoPlayer) : Player by p
       //  strategy (set our own stuff, but let them disable that) is entirely reasonable
       // DESIGN NOTES:
       //  Overloading and Defaults:
-      //  This adds a parameter to the method, but doesn't break any integrations. In kotlin,
-      //  the reasonable default is used. In java, overloads of this method are synthesized, that
-      //  call this one with default params. `true` is the obvious choice for a default, as most
-      //  people will either inject Exo's default objects or else they'll let Exo inject the defaults
-      //  for them. This is fine, we are also injecting defaults, ergo `true` is safe most of the time
+      //  This adds a parameter to the method, but doesn't break any integrations. `true` is the
+      //  obvious choice for a default, since most customers (especially lv 2-4 on the VMM) will not
+      //  be setting any custom implementation of things like MediaSource.Factory. They'll use the
+      //  same DefaultMediaSourceFactory that we are :)
       if (configureAutomatically) {
         mediaSourceFactory.configureForMux()
       }
