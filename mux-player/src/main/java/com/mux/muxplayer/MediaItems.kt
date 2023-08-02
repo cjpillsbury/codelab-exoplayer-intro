@@ -4,6 +4,11 @@ import androidx.media3.common.MediaItem
 
 /**
  * Creates instances of [MediaItem] or [MediaItem.Builder] configured for easy use with Mux Player
+ *
+ * DESIGN NOTES: Depending on the number of playback parameters available, we may want to group
+ * certain parameters into a data class for simplicity, instead of having factory methods with a
+ * zillion parameters. These factory APIs should still be to yield a media3 object as quickly as
+ * possible
  */
 object MediaItems {
   /**
