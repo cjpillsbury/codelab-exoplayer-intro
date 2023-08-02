@@ -44,15 +44,15 @@ class MuxPlayer private constructor(private val player: ExoPlayer) : Player by p
       configureAutomatically: Boolean = true
     ): Builder {
       this.builder = this.builder.setMediaSourceFactory(mediaSourceFactory)
-      // If the customer is using, eg, a custom Cmcd implementation, we don't want to blow it
-      // over.
       // DESIGN NOTES:
       //  Conflicts in Dependency Injection:
       //  Resolving conflicts between customer-injected objects an our own is not
       //  a simple problem. We inject entire objects, not just methods. Two MediaSources, for
-      //  instance, would each try to fetch the media. Obviously this is undesirable.
-      //  Luckily, this tradeoff (losing features because you injected a less-capable object
-      //  of your own) is a well-understood part of dependency injection, and this resolution
+      //  instance, would each try to fetch the media. Obviously this is undesirable, regardless of
+      //  the order they are called. There's one MediaSource, which can get many tracks, and that
+      //  is media3's design.
+      //  Luckily, the tradeoff of losing features because you injected a less-capable object
+      //  of your own is a well-understood part of dependency injection. This resolution
       //  strategy (set our own stuff, but let them disable that) is entirely reasonable
       // DESIGN NOTES:
       //  Overloading and Defaults:
@@ -76,8 +76,9 @@ class MuxPlayer private constructor(private val player: ExoPlayer) : Player by p
 
     init {
       builder.setMediaSourceFactory(Defaults.mediaSourceFactory(context))
-      // TODO: Add more defaults
-      //   (but Exo will fill in objects we don't provide, so only inject things we really configure)
+      // TODO: Add more defaults, if nesc.
+      // DESIGN NOTES: Exo injects default objects w/default configurations so only inject objects
+      //  where we actually need to change something
     }
 
     /**
