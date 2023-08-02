@@ -25,6 +25,13 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.LoadEventInfo
+import androidx.media3.exoplayer.source.MediaLoadData
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.upstream.CmcdConfiguration
+import androidx.media3.exoplayer.util.EventLogger
 import com.example.exoplayer.databinding.ActivityPlayerBinding
 import com.mux.muxplayer.MuxMediaItemBuilder
 import com.mux.muxplayer.MuxPlayer
@@ -82,8 +89,19 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun initializePlayer() {
-        // MuxPlayer implements the Player interface
+        @SuppressLint("UnsafeOptInUsageError")
+        val cmcdConfigurationFactory = CmcdConfiguration.Factory.DEFAULT
+        val context = this
+        @SuppressLint("UnsafeOptInUsageError")
+        // DO THIS INSIDE MuxPlayer using its MediaSource factory (builder or player instance)
+        val mediaSourceFactory: MediaSource.Factory =
+            DefaultMediaSourceFactory(context)
+                .setCmcdConfigurationFactory(cmcdConfigurationFactory)
+//                .setDataSourceFactory(cacheDataSourceFactory)
+//                .setLocalAdInsertionComponents(adsLoaderProvider, playerView)
+        // MuxPlayer implements the ExoPlayer interface
         player = MuxPlayer.Builder(this)
+            .setMediaSourceFactory(mediaSourceFactory)
             .build()
             .also { exoPlayer ->
                 viewBinding.videoView.player = exoPlayer
@@ -102,6 +120,40 @@ class PlayerActivity : AppCompatActivity() {
                 exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
                 exoPlayer.playWhenReady = playWhenReady
                 exoPlayer.addListener(playbackStateListener)
+                exoPlayer.addListener(
+                    object : Player.Listener {
+                        override fun onEvents(player: Player, events: Player.Events) {
+                            println("${TAG}: ${events}")
+                        }
+                    }
+                )
+                exoPlayer.addAnalyticsListener(EventLogger())
+                exoPlayer.addAnalyticsListener(
+                    object: AnalyticsListener {
+                        @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+                        override fun onLoadStarted(
+                            eventTime: AnalyticsListener.EventTime,
+                            loadEventInfo: LoadEventInfo,
+                            mediaLoadData: MediaLoadData
+                        ) {
+                            var segmentMimeType = "unknown"
+                            var segmentWidth = 0
+                            var segmentHeight = 0
+
+                            mediaLoadData.trackFormat?.let { format ->
+                                format.sampleMimeType?.let { segmentMimeType = it }
+                                segmentWidth = format.width
+                                segmentHeight = format.height
+                            }
+                            Log.d(TAG, loadEventInfo.dataSpec.httpRequestHeaders.toString())
+//                            bandwidthMetrics?.onLoadStarted(
+//                                loadEventInfo.loadTaskId, mediaLoadData.mediaStartTimeMs,
+//                                mediaLoadData.mediaEndTimeMs, loadEventInfo.uri.path, mediaLoadData.dataType,
+//                                loadEventInfo.uri.host, segmentMimeType, segmentWidth, segmentHeight
+//                            )
+                        }
+                    }
+                )
                 exoPlayer.prepare()
             }
     }
