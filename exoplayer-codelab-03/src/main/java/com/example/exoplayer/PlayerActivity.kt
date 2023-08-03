@@ -79,7 +79,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun initializePlayer() {
         // ExoPlayer implements the Player interface
-        player = ExoPlayer.Builder(this)
+        player = MuxPlayer.Builder(this)
             .build()
             .also { exoPlayer ->
                 viewBinding.videoView.player = exoPlayer
@@ -89,9 +89,10 @@ class PlayerActivity : AppCompatActivity() {
                         .setMaxVideoSizeSd()
                         .build()
 
-                val mediaItem = MediaItem.Builder()
-                    .setUri(getString(R.string.media_url_dash))
-                    .setMimeType(MimeTypes.APPLICATION_MPD)
+                val mediaItem = MuxPlayer.MediaItemBuilder()
+                    .setPlaybackId("my_playback_id")
+//                    .setUri(getString(R.string.media_url_hls))
+//                    .setMimeType(MimeTypes.APPLICATION_M3U8)
                     .build()
                 exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
                 exoPlayer.playWhenReady = playWhenReady

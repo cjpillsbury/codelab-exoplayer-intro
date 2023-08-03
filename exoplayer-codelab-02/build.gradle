@@ -3,10 +3,9 @@ android {
     namespace 'com.example.exoplayer'
 }
 
-def mediaVersion = "1.0.1"
+def mediaVersion = parent.ext.mediaVersion
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation "androidx.media3:media3-exoplayer:$mediaVersion"
     implementation "androidx.media3:media3-ui:$mediaVersion"
-    implementation "androidx.media3:media3-exoplayer-dash:$mediaVersion"
 }

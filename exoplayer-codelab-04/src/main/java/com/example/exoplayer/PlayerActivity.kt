@@ -23,11 +23,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.media3.common.MediaItem
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.analytics.AnalyticsListener
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.LoadEventInfo
+import androidx.media3.exoplayer.source.MediaLoadData
+import androidx.media3.exoplayer.source.MediaSource
+import androidx.media3.exoplayer.upstream.CmcdConfiguration
+import androidx.media3.exoplayer.util.EventLogger
 import com.example.exoplayer.databinding.ActivityPlayerBinding
+import com.mux.muxplayer.MediaItems
+import com.mux.muxplayer.MuxPlayer
 
 private const val TAG = "PlayerActivity"
 
@@ -82,8 +89,19 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun initializePlayer() {
-        // ExoPlayer implements the Player interface
-        player = ExoPlayer.Builder(this)
+        @SuppressLint("UnsafeOptInUsageError")
+        val cmcdConfigurationFactory = CmcdConfiguration.Factory.DEFAULT
+        val context = this
+        @SuppressLint("UnsafeOptInUsageError")
+        // DO THIS INSIDE MuxPlayer using its MediaSource factory (builder or player instance)
+        val mediaSourceFactory: MediaSource.Factory =
+            DefaultMediaSourceFactory(context)
+                .setCmcdConfigurationFactory(cmcdConfigurationFactory)
+//                .setDataSourceFactory(cacheDataSourceFactory)
+//                .setLocalAdInsertionComponents(adsLoaderProvider, playerView)
+        // MuxPlayer implements the ExoPlayer interface
+        player = MuxPlayer.Builder(this)
+            .setMediaSourceFactory(mediaSourceFactory)
             .build()
             .also { exoPlayer ->
                 viewBinding.videoView.player = exoPlayer
@@ -93,13 +111,47 @@ class PlayerActivity : AppCompatActivity() {
                         .setMaxVideoSizeSd()
                         .build()
 
-                val mediaItem = MediaItem.Builder()
-                    .setUri(getString(R.string.media_url_dash))
-                    .setMimeType(MimeTypes.APPLICATION_MPD)
-                    .build()
+                val mediaItem = MediaItems.fromMuxPlaybackId(getString(R.string.media_mux_playback_id))
+//                   // replace the playbackId usage below with this to demo use of customDomains
+//                    .setPlaybackId(getString(R.string.media_mux_playback_id_custom_domain))
+//                    .setCustomDomain(getString(R.string.media_mux_custom_domain))
                 exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
                 exoPlayer.playWhenReady = playWhenReady
                 exoPlayer.addListener(playbackStateListener)
+                exoPlayer.addListener(
+                    object : Player.Listener {
+                        override fun onEvents(player: Player, events: Player.Events) {
+                            println("${TAG}: ${events}")
+                        }
+                    }
+                )
+                exoPlayer.exoPlayer.addAnalyticsListener(EventLogger())
+                exoPlayer.exoPlayer.addAnalyticsListener(
+                    object: AnalyticsListener {
+                        @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+                        override fun onLoadStarted(
+                            eventTime: AnalyticsListener.EventTime,
+                            loadEventInfo: LoadEventInfo,
+                            mediaLoadData: MediaLoadData
+                        ) {
+                            var segmentMimeType = "unknown"
+                            var segmentWidth = 0
+                            var segmentHeight = 0
+
+                            mediaLoadData.trackFormat?.let { format ->
+                                format.sampleMimeType?.let { segmentMimeType = it }
+                                segmentWidth = format.width
+                                segmentHeight = format.height
+                            }
+                            Log.d(TAG, loadEventInfo.dataSpec.httpRequestHeaders.toString())
+//                            bandwidthMetrics?.onLoadStarted(
+//                                loadEventInfo.loadTaskId, mediaLoadData.mediaStartTimeMs,
+//                                mediaLoadData.mediaEndTimeMs, loadEventInfo.uri.path, mediaLoadData.dataType,
+//                                loadEventInfo.uri.host, segmentMimeType, segmentWidth, segmentHeight
+//                            )
+                        }
+                    }
+                )
                 exoPlayer.prepare()
             }
     }
