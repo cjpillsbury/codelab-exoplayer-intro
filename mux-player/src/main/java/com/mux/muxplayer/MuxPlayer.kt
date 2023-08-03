@@ -22,8 +22,8 @@ class MuxPlayer private constructor(private val player: ExoPlayer) : Player by p
   //private val muxStats: MuxStatsSdkMedia3<ExoPlayer>
 
   fun setCuePoints(points: CuePoints) {
-    // Just a for-instance. If we also offer tools to download CuePoints, then probs we'd set a
-    // loader or "CuePoints ID" or something instead of making them set that up
+    // Just a possible example. If we also offer tools to download CuePoints, then probs we'd set a
+    // loader or "CuePoints ID" or something instead of making them do that themselves and pass it
   }
 
   override fun release() {
