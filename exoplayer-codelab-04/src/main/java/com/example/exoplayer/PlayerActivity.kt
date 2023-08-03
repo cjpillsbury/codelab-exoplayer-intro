@@ -33,7 +33,7 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.upstream.CmcdConfiguration
 import androidx.media3.exoplayer.util.EventLogger
 import com.example.exoplayer.databinding.ActivityPlayerBinding
-import com.mux.muxplayer.MuxMediaItemBuilder
+import com.mux.muxplayer.MediaItems
 import com.mux.muxplayer.MuxPlayer
 
 private const val TAG = "PlayerActivity"
@@ -111,12 +111,10 @@ class PlayerActivity : AppCompatActivity() {
                         .setMaxVideoSizeSd()
                         .build()
 
-                val mediaItem = MuxMediaItemBuilder()
+                val mediaItem = MediaItems.fromMuxPlaybackId(getString(R.string.media_mux_playback_id))
 //                   // replace the playbackId usage below with this to demo use of customDomains
 //                    .setPlaybackId(getString(R.string.media_mux_playback_id_custom_domain))
 //                    .setCustomDomain(getString(R.string.media_mux_custom_domain))
-                    .setPlaybackId(getString(R.string.media_mux_playback_id))
-                    .build()
                 exoPlayer.setMediaItems(listOf(mediaItem), mediaItemIndex, playbackPosition)
                 exoPlayer.playWhenReady = playWhenReady
                 exoPlayer.addListener(playbackStateListener)
@@ -127,8 +125,8 @@ class PlayerActivity : AppCompatActivity() {
                         }
                     }
                 )
-                exoPlayer.addAnalyticsListener(EventLogger())
-                exoPlayer.addAnalyticsListener(
+                exoPlayer.exoPlayer.addAnalyticsListener(EventLogger())
+                exoPlayer.exoPlayer.addAnalyticsListener(
                     object: AnalyticsListener {
                         @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
                         override fun onLoadStarted(
